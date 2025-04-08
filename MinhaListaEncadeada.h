@@ -21,10 +21,20 @@
 template <typename T>
 class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
 {
-    /**
-     * @brief Destrutor. Destroi todos os elementos da lista
-     */
-    virtual ~MinhaListaEncadeada()
+    private:
+        int EntryCount;
+        Elemento<T> *Anchorptr;
+
+    public : 
+    MinhaListaEncadeada()
+    {
+        EntryCount = 0;
+        Anchorptr = nullptr;
+    }
+        /**
+         * @brief Destrutor. Destroi todos os elementos da lista
+         */
+        virtual ~MinhaListaEncadeada()
     {
         // escreva o algoritmo esperado
     }
@@ -36,8 +46,7 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual std::size_t tamanho() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return 0;
+        return EntryCount;
     };
 
     /**
@@ -47,7 +56,13 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual bool vazia() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (EntryCount == 0)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
         return true;
     };
 
@@ -84,7 +99,23 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      * @param dado O item sendo inserido.
      */
     virtual void inserirNoInicio(T dado) {
-        // escreva o algoritmo esperado
+        Elemento<T> *TemporaryPtr = nullptr;
+        Elemento<T> *Classptr = nullptr;
+        TemporaryPtr = Anchorptr;
+        if (TemporaryPtr = nullptr)
+        {
+            Classptr = new Elemento<T>(dado);
+            TemporaryPtr = Classptr;
+            EntryCount = EntryCount + 1 ;
+        }
+        else
+        {
+            /* code */
+        }
+        
+        
+
+        Anchorptr = TemporaryPtr;
     };
 
     /**
