@@ -21,20 +21,22 @@
 template <typename T>
 class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
 {
-    private:
-        int EntryCount;
-        Elemento<T> *Anchorptr;
+private:
+    int EntryCount_c;
+    Elemento<T> *StartAnchorptr_c;
+    Elemento<T> *EndAnchorptr_c;
 
-    public : 
+public:
     MinhaListaEncadeada()
     {
-        EntryCount = 0;
-        Anchorptr = nullptr;
+        EntryCount_c = 0;
+        StartAnchorptr_c = nullptr;
+        EndAnchorptr_c = nullptr;
     }
-        /**
-         * @brief Destrutor. Destroi todos os elementos da lista
-         */
-        virtual ~MinhaListaEncadeada()
+    /**
+     * @brief Destrutor. Destroi todos os elementos da lista
+     */
+    virtual ~MinhaListaEncadeada()
     {
         // escreva o algoritmo esperado
     }
@@ -46,7 +48,7 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual std::size_t tamanho() const
     {
-        return EntryCount;
+        return EntryCount_c;
     };
 
     /**
@@ -56,11 +58,12 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual bool vazia() const
     {
-        if (EntryCount == 0)
+        if (EntryCount_c == 0)
         {
             return true;
         }
-        else{
+        else
+        {
             return false;
         }
         return true;
@@ -77,8 +80,30 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual std::size_t posicao(T dado) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return 0;
+        if (EntryCount_c == 0)
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+        
+        
+
+        std::size_t Pos = 0;
+        Elemento<T> *Seekptr = StartAnchorptr_c;
+        
+        do
+        {
+            
+            if (Seekptr->dado == dado)
+            {
+                return Pos;
+            }
+            
+
+            Seekptr = Seekptr->proximo;
+            Pos += 1;
+        } while (Seekptr!= nullptr);
+
+        throw(ExcecaoDadoInexistente());
     };
 
     /**
@@ -89,7 +114,28 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      */
     virtual bool contem(T dado) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+
+        if (EntryCount_c == 0)
+        {
+            return false;
+        }
+        std::size_t Pos = 0;
+        Elemento<T> *Seekptr = StartAnchorptr_c;
+
+        do
+        {
+            
+            if (Seekptr->dado == dado)
+            {
+                return true;
+            }
+
+            Seekptr = Seekptr->proximo;
+            Pos += 1;
+        } while (Seekptr != nullptr);
+
+        throw(ExcecaoDadoInexistente());
+
         return false;
     };
 
@@ -98,24 +144,33 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      *
      * @param dado O item sendo inserido.
      */
-    virtual void inserirNoInicio(T dado) {
+    virtual void inserirNoInicio(T dado)
+    {
         Elemento<T> *TemporaryPtr = nullptr;
         Elemento<T> *Classptr = nullptr;
-        TemporaryPtr = Anchorptr;
-        if (TemporaryPtr = nullptr)
+        Elemento<T> *Selector = nullptr;
+
+        if (StartAnchorptr_c == nullptr)
         {
             Classptr = new Elemento<T>(dado);
-            TemporaryPtr = Classptr;
-            EntryCount = EntryCount + 1 ;
-        }
-        else
-        {
-            /* code */
-        }
-        
-        
 
-        Anchorptr = TemporaryPtr;
+            StartAnchorptr_c = Classptr;
+            EndAnchorptr_c = Classptr;
+
+            EntryCount_c += 1;
+            return;
+        }else
+        {
+            Classptr = new Elemento<T>(dado);
+
+            Classptr->proximo = StartAnchorptr_c;
+
+            StartAnchorptr_c = Classptr;
+            EntryCount_c += 1;
+        }
+
+        return;
+        
     };
 
     /**
@@ -130,7 +185,36 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      * @param dado O item sendo inserido.
      */
     virtual void inserir(std::size_t posicao, T dado) {
-        // escreva o algoritmo esperado
+
+        if (posicao < 0 || posicao > EntryCount_c)
+        {
+            throw(ExcecaoPosicaoInvalida());
+        }
+        if (EntryCount_c == 0)
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+        if (posicao == EntryCount_c)
+        {
+            inserirNoFim(dado);
+        }
+        
+
+        std::size_t Pos = 0;
+        Elemento<T> *Seekptr = StartAnchorptr_c;
+
+        do
+        {
+            if (Pos == posicao)
+            {
+                break;
+            }
+            Seekptr = Seekptr->proximo;
+            Pos += 1;
+        } while (Seekptr != nullptr);
+
+        
+        
     };
 
     /**
@@ -139,7 +223,32 @@ class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
      * @param dado O item sendo inserido.
      */
     virtual void inserirNoFim(T dado) {
-        // escreva o algoritmo esperado
+        Elemento<T> *TemporaryPtr = nullptr;
+        Elemento<T> *Classptr = nullptr;
+        Elemento<T> *Selector = nullptr;
+
+        if (StartAnchorptr_c == nullptr)
+        {
+            Classptr = new Elemento<T>(dado);
+
+            StartAnchorptr_c = Classptr;
+            EndAnchorptr_c = Classptr;
+
+            EntryCount_c += 1;
+            return;
+        }
+        else
+        {
+            Classptr = new Elemento<T>(dado);
+
+            EndAnchorptr_c->proximo = Classptr;
+            // Classptr->proximo = StartAnchorptr_c;
+
+            EndAnchorptr_c = Classptr;
+            EntryCount_c += 1;
+        }
+
+        return;
     };
 
     /**
