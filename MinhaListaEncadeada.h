@@ -21,18 +21,8 @@
 template <typename T>
 class MinhaListaEncadeada : public ListaEncadeadaAbstrata<T>
 {
-private:
-    int EntryCount_c;
-    Elemento<T> *StartAnchorptr_c;
-    Elemento<T> *EndAnchorptr_c;
 
 public:
-    MinhaListaEncadeada()
-    {
-        EntryCount_c = 0;
-        StartAnchorptr_c = nullptr;
-        EndAnchorptr_c = nullptr;
-    }
     /**
      * @brief Destrutor. Destroi todos os elementos da lista
      */
@@ -48,7 +38,7 @@ public:
      */
     virtual std::size_t tamanho() const
     {
-        return EntryCount_c;
+        return this->_tamanho;
     };
 
     /**
@@ -58,7 +48,7 @@ public:
      */
     virtual bool vazia() const
     {
-        if (EntryCount_c == 0)
+        if (this->_tamanho == 0)
         {
             return true;
         }
@@ -80,28 +70,25 @@ public:
      */
     virtual std::size_t posicao(T dado) const
     {
-        if (EntryCount_c == 0)
+        if (this->_tamanho == 0)
         {
             throw(ExcecaoListaEncadeadaVazia());
         }
-        
-        
 
         std::size_t Pos = 0;
-        Elemento<T> *Seekptr = StartAnchorptr_c;
-        
+        Elemento<T> *Seekptr = this->_primeiro;
+
         do
         {
-            
+
             if (Seekptr->dado == dado)
             {
                 return Pos;
             }
-            
 
             Seekptr = Seekptr->proximo;
             Pos += 1;
-        } while (Seekptr!= nullptr);
+        } while (Seekptr != nullptr);
 
         throw(ExcecaoDadoInexistente());
     };
@@ -115,16 +102,16 @@ public:
     virtual bool contem(T dado) const
     {
 
-        if (EntryCount_c == 0)
+        if (this->_tamanho == 0)
         {
             return false;
         }
         std::size_t Pos = 0;
-        Elemento<T> *Seekptr = StartAnchorptr_c;
+        Elemento<T> *Seekptr = this->_primeiro;
 
         do
         {
-            
+
             if (Seekptr->dado == dado)
             {
                 return true;
@@ -150,27 +137,26 @@ public:
         Elemento<T> *Classptr = nullptr;
         Elemento<T> *Selector = nullptr;
 
-        if (StartAnchorptr_c == nullptr)
+        if (this->_primeiro == nullptr)
         {
             Classptr = new Elemento<T>(dado);
 
-            StartAnchorptr_c = Classptr;
-            EndAnchorptr_c = Classptr;
+            this->_primeiro = Classptr;
 
-            EntryCount_c += 1;
+            this->_tamanho += 1;
             return;
-        }else
+        }
+        else
         {
             Classptr = new Elemento<T>(dado);
 
-            Classptr->proximo = StartAnchorptr_c;
+            Classptr->proximo = this->_primeiro;
 
-            StartAnchorptr_c = Classptr;
-            EntryCount_c += 1;
+            this->_primeiro = Classptr;
+            this->_tamanho += 1;
         }
 
         return;
-        
     };
 
     /**
@@ -184,37 +170,39 @@ public:
      * fim da lista.
      * @param dado O item sendo inserido.
      */
-    virtual void inserir(std::size_t posicao, T dado) {
+    virtual void inserir(std::size_t posicao, T dado)
+    {
 
-        if (posicao < 0 || posicao > EntryCount_c)
+        if (posicao < 0 || posicao > this->_tamanho)
         {
             throw(ExcecaoPosicaoInvalida());
         }
-        if (EntryCount_c == 0)
-        {
-            throw(ExcecaoListaEncadeadaVazia());
-        }
-        if (posicao == EntryCount_c)
+
+        if (posicao == this->_tamanho)
         {
             inserirNoFim(dado);
         }
-        
+        Elemento<T> *Classptr = nullptr;
+        std::size_t Pos = 1;
+        Elemento<T> *Seekptr = this->_primeiro;
 
-        std::size_t Pos = 0;
-        Elemento<T> *Seekptr = StartAnchorptr_c;
+        Elemento<T> *Temp = nullptr;
 
         do
         {
-            if (Pos == posicao)
+            if (Pos == posicao - 1)
             {
                 break;
             }
             Seekptr = Seekptr->proximo;
             Pos += 1;
         } while (Seekptr != nullptr);
+        Temp = Seekptr->proximo;
+        Classptr = new Elemento<T>(dado);
+        Classptr->proximo = Temp;
+        Seekptr->proximo = Classptr;
 
-        
-        
+        // TODO FINISH THIS
     };
 
     /**
@@ -222,30 +210,30 @@ public:
      *
      * @param dado O item sendo inserido.
      */
-    virtual void inserirNoFim(T dado) {
+    virtual void inserirNoFim(T dado)
+    {
         Elemento<T> *TemporaryPtr = nullptr;
         Elemento<T> *Classptr = nullptr;
         Elemento<T> *Selector = nullptr;
+        Classptr = new Elemento<T>(dado);
 
-        if (StartAnchorptr_c == nullptr)
+        if (this->_primeiro == nullptr)
         {
-            Classptr = new Elemento<T>(dado);
 
-            StartAnchorptr_c = Classptr;
-            EndAnchorptr_c = Classptr;
+            this->_primeiro = Classptr;
 
-            EntryCount_c += 1;
+            this->_tamanho += 1;
             return;
         }
         else
         {
-            Classptr = new Elemento<T>(dado);
-
-            EndAnchorptr_c->proximo = Classptr;
-            // Classptr->proximo = StartAnchorptr_c;
-
-            EndAnchorptr_c = Classptr;
-            EntryCount_c += 1;
+            Selector = this->_primeiro;
+            while (Selector->proximo != nullptr)
+            {
+                Selector = Selector->proximo;
+            }
+            Selector->proximo = Classptr;
+            this->_tamanho += 1;
         }
 
         return;
