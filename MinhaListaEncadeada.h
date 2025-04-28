@@ -106,7 +106,7 @@ public:
         {
             return false;
         }
-        std::size_t Pos = 0;
+        std::size_t Pos = 1;
         Elemento<T> *Seekptr = this->_primeiro;
 
         do
@@ -121,7 +121,7 @@ public:
             Pos += 1;
         } while (Seekptr != nullptr);
 
-        throw(ExcecaoDadoInexistente());
+        // throw(ExcecaoDadoInexistente());
 
         return false;
     };
@@ -172,6 +172,10 @@ public:
      */
     virtual void inserir(std::size_t posicao, T dado)
     {
+        Elemento<T> *Classptr = nullptr;
+        std::size_t Pos = 0;
+        Elemento<T> *Seekptr = this->_primeiro;
+        Elemento<T> *Temp = nullptr;
 
         if (posicao < 0 || posicao > this->_tamanho)
         {
@@ -181,12 +185,14 @@ public:
         if (posicao == this->_tamanho)
         {
             inserirNoFim(dado);
+            return;
         }
-        Elemento<T> *Classptr = nullptr;
-        std::size_t Pos = 1;
-        Elemento<T> *Seekptr = this->_primeiro;
 
-        Elemento<T> *Temp = nullptr;
+        if (Pos == posicao)
+        {
+            inserirNoInicio(dado);
+            return;
+        }
 
         do
         {
@@ -197,11 +203,12 @@ public:
             Seekptr = Seekptr->proximo;
             Pos += 1;
         } while (Seekptr != nullptr);
+
         Temp = Seekptr->proximo;
         Classptr = new Elemento<T>(dado);
         Classptr->proximo = Temp;
         Seekptr->proximo = Classptr;
-
+        this->_tamanho += 1;
         // TODO FINISH THIS
     };
 
@@ -247,8 +254,21 @@ public:
      */
     virtual T removerDoInicio()
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return 0;
+        T dado = 0;
+        if (this->_tamanho == 0)
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+
+        Elemento<T> *TemporaryDeletePtr = nullptr;
+        TemporaryDeletePtr = this->_primeiro;
+        this->_primeiro = TemporaryDeletePtr->proximo;
+        dado = TemporaryDeletePtr->dado;
+        delete (TemporaryDeletePtr);
+
+        this->_tamanho -= 1;
+
+        return dado;
     };
 
     /**
@@ -260,8 +280,45 @@ public:
      */
     virtual T removerDe(std::size_t posicao)
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return 0;
+        if (this->_tamanho == 0)
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+
+        T dado = 0;
+
+        Elemento<T> *TemporaryHoldPtr = nullptr;
+        Elemento<T> *TemporaryDeletePtr = nullptr;
+        Elemento<T> *Seekptr = this->_primeiro;
+        std::size_t Pos = 1;
+
+        do
+        {
+            if (Pos == posicao - 1 || Seekptr->proximo == nullptr)
+            {
+                break;
+            }
+            Seekptr = Seekptr->proximo;
+            Pos += 1;
+        } while (Seekptr->proximo != nullptr);
+
+        if (Seekptr->proximo == nullptr)
+        {
+            TemporaryDeletePtr = Seekptr;
+            this->_primeiro = nullptr;
+        }
+        else
+        {
+            TemporaryDeletePtr = Seekptr->proximo;
+            Seekptr->proximo = Seekptr->proximo->proximo;
+        }
+
+        dado = TemporaryDeletePtr->dado;
+        delete (TemporaryDeletePtr);
+
+        this->_tamanho -= 1;
+
+        return dado;
     };
 
     /**
@@ -272,7 +329,47 @@ public:
      */
     virtual T removerDoFim()
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->_tamanho == 0)
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+
+        T dado = 0;
+        Elemento<T> *TemporaryDeletePtr = nullptr;
+        Elemento<T> *Seekptr = this->_primeiro;
+        std::size_t Pos = 0;
+
+        do
+        {
+            if (Pos == this->_tamanho - 1 || Seekptr->proximo == nullptr)
+            {
+                break;
+            }
+            Seekptr = Seekptr->proximo;
+            Pos += 1;
+        } while (Seekptr->proximo != nullptr);
+
+        // while (TemporaryDeletePtr->proximo != nullptr)
+        // {
+        //     TemporaryDeletePtr = TemporaryDeletePtr->proximo;
+        // }
+        if (Seekptr->proximo == nullptr)
+        {
+            TemporaryDeletePtr = Seekptr;
+            this->_primeiro = nullptr;
+        }
+        else
+        {
+            TemporaryDeletePtr = Seekptr->proximo;
+            Seekptr->proximo = nullptr;
+        }
+
+        dado = TemporaryDeletePtr->dado;
+        delete (TemporaryDeletePtr);
+
+        this->_tamanho -= 1;
+
+        return dado;
         return 0;
     };
 
