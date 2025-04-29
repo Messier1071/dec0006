@@ -28,7 +28,13 @@ public:
      */
     virtual ~MinhaListaEncadeada()
     {
-        // escreva o algoritmo esperado
+        while (!vazia())
+        {
+            std::cout << "\n"
+                      << removerDoInicio();
+        }
+        std::cout << "\n"
+                  << vazia();
     }
 
     /**
@@ -290,11 +296,11 @@ public:
         Elemento<T> *TemporaryHoldPtr = nullptr;
         Elemento<T> *TemporaryDeletePtr = nullptr;
         Elemento<T> *Seekptr = this->_primeiro;
-        std::size_t Pos = 1;
+        std::size_t Pos = 0;
 
         do
         {
-            if (Pos == posicao - 1 || Seekptr->proximo == nullptr)
+            if (Pos == posicao || Seekptr->proximo == nullptr)
             {
                 break;
             }
@@ -317,7 +323,8 @@ public:
         delete (TemporaryDeletePtr);
 
         this->_tamanho -= 1;
-
+        std::cout << "\n"
+                  << dado << "\n";
         return dado;
     };
 
@@ -337,7 +344,7 @@ public:
         T dado = 0;
         Elemento<T> *TemporaryDeletePtr = nullptr;
         Elemento<T> *Seekptr = this->_primeiro;
-        std::size_t Pos = 0;
+        std::size_t Pos = 1;
 
         do
         {
