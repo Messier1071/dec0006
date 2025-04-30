@@ -409,17 +409,24 @@ public:
 
         while (Seekptr->proximo != nullptr)
         {
-            if (Seekptr->dado == dado)
+            if (Seekptr->proximo->dado == dado)
             {
                 break;
             }
             Seekptr = Seekptr->proximo;
         }
+        if (Seekptr == nullptr)
+        {
+            throw(ExcecaoDadoInexistente());
+        }
+        if (Seekptr == this->_primeiro)
+        {
+            removerDoInicio();
+        }
 
         TemporaryDeletePtr = Seekptr->proximo;
-        Seekptr->proximo = nullptr;
+        Seekptr = Seekptr->proximo;
 
-        dado = TemporaryDeletePtr->dado;
         delete (TemporaryDeletePtr);
 
         this->_tamanho -= 1;
