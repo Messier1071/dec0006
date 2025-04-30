@@ -28,13 +28,10 @@ public:
      */
     virtual ~MinhaListaEncadeada()
     {
-        while (!vazia())
+        while (!this->vazia())
         {
-            std::cout << "\n"
-                      << removerDoInicio();
+            removerDoInicio();
         }
-        std::cout << "\n"
-                  << vazia();
     }
 
     /**
@@ -190,13 +187,13 @@ public:
 
         if (posicao == this->_tamanho)
         {
-            inserirNoFim(dado);
+            this->inserirNoFim(dado);
             return;
         }
 
         if (Pos == posicao)
         {
-            inserirNoInicio(dado);
+            this->inserirNoInicio(dado);
             return;
         }
 
@@ -286,9 +283,14 @@ public:
      */
     virtual T removerDe(std::size_t posicao)
     {
-        if (this->_tamanho == 0)
+
+        if (posicao < 0)
         {
-            throw(ExcecaoListaEncadeadaVazia());
+            throw(ExcecaoPosicaoInvalida());
+        }
+        if (posicao + 1 > this->_tamanho)
+        {
+            throw(ExcecaoPosicaoInvalida());
         }
 
         T dado = 0;
@@ -298,9 +300,18 @@ public:
         Elemento<T> *Seekptr = this->_primeiro;
         std::size_t Pos = 0;
 
+        if (Pos == posicao)
+        {
+            return this->removerDoInicio();
+        }
+        if (Pos == this->_tamanho)
+        {
+            return this->removerDoFim();
+        }
+
         do
         {
-            if (Pos == posicao || Seekptr->proximo == nullptr)
+            if (Pos == posicao - 1 || Seekptr->proximo == nullptr)
             {
                 break;
             }
@@ -323,8 +334,6 @@ public:
         delete (TemporaryDeletePtr);
 
         this->_tamanho -= 1;
-        std::cout << "\n"
-                  << dado << "\n";
         return dado;
     };
 
@@ -336,7 +345,7 @@ public:
      */
     virtual T removerDoFim()
     {
-        if (this->_tamanho == 0)
+        if (this->vazia())
         {
             throw(ExcecaoListaEncadeadaVazia());
         }
@@ -388,8 +397,32 @@ public:
      * @param dado O item a ser removido. Se houver mais que um item com
      * o mesmo valor, remove a primeira ocorrência.
      */
-    virtual void remover(T dado) {
-        // escreva o algoritmo esperado
+    virtual void remover(T dado)
+    {
+        if (this->vazia())
+        {
+            throw(ExcecaoListaEncadeadaVazia());
+        }
+
+        Elemento<T> *TemporaryDeletePtr = nullptr;
+        Elemento<T> *Seekptr = this->_primeiro;
+
+        while (Seekptr->proximo != nullptr)
+        {
+            if (Seekptr->dado == dado)
+            {
+                break;
+            }
+            Seekptr = Seekptr->proximo;
+        }
+
+        TemporaryDeletePtr = Seekptr->proximo;
+        Seekptr->proximo = nullptr;
+
+        dado = TemporaryDeletePtr->dado;
+        delete (TemporaryDeletePtr);
+
+        this->_tamanho -= 1;
     };
 };
 
