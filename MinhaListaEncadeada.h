@@ -403,9 +403,18 @@ public:
         {
             throw(ExcecaoListaEncadeadaVazia());
         }
+       
+        
 
         Elemento<T> *TemporaryDeletePtr = nullptr;
         Elemento<T> *Seekptr = this->_primeiro;
+
+        if (Seekptr->dado == dado)
+        {
+           this->removerDoInicio();
+           return;
+        }
+        
 
         while (Seekptr->proximo != nullptr)
         {
@@ -415,19 +424,21 @@ public:
             }
             Seekptr = Seekptr->proximo;
         }
-        if (Seekptr == nullptr)
+        
+        
+        if (Seekptr->dado == dado)
+        {
+            this->removerDoFim();
+        }
+        if (Seekptr->dado != dado && Seekptr->proximo == nullptr)
         {
             throw(ExcecaoDadoInexistente());
         }
-        if (Seekptr == this->_primeiro)
-        {
-            removerDoInicio();
-        }
 
         TemporaryDeletePtr = Seekptr->proximo;
-        Seekptr = Seekptr->proximo;
+        Seekptr->proximo = Seekptr->proximo->proximo;
 
-        delete (TemporaryDeletePtr);
+        delete(TemporaryDeletePtr);
 
         this->_tamanho -= 1;
     };
