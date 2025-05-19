@@ -11,7 +11,7 @@
 template <typename T>
 class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
 {
-    virtual ~MinhaArvoreAVL(){
+    virtual ~MinhaArvoreAVL() {
         // escreva o algoritmo esperado
     };
 
@@ -21,7 +21,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual bool vazia() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->raiz == nullptr)
+        {
+            return true;
+        }
+
         return false;
     };
 
@@ -31,7 +35,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual int quantidade() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->vazia())
+        {
+            return 0;
+        }
+
         return -1;
     };
 
@@ -42,7 +50,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual bool contem(T chave) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->vazia())
+        {
+            return false;
+        }
+
         return false;
     };
 
@@ -61,15 +73,50 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      * @brief Insere uma chave na arvore
      * @param chave chave a ser inserida
      */
-    virtual void inserir(T chave){
-        // escreva o algoritmo esperado
+    virtual void inserir(T chave)
+    {
+        /*
+
+if insertion point is found
+
+  create new vertex
+
+if value to be inserted < this key
+
+  go left
+
+else if value to be inserted > this key
+
+  go right
+
+else increment frequency
+*/
+
+        if (this->vazia())
+        {
+            this->raiz = new Nodo<T>{chave};
+            return;
+        }
+        Nodo<T> *Searchptr = this->raiz;
+        Nodo<T> *InsertionPoint = nullptr;
+        while (InsertionPoint == nullptr)
+        {
+            if (Searchptr->chave < chave)
+            {
+                Searchptr = Searchptr->filhoEsquerda;
+            }
+            if (Searchptr->chave > chave)
+            {
+                Searchptr = Searchptr->filhoEsquerda;
+            }
+        }
     };
 
     /**
      * @brief Remove uma chave da arvore
      * @param chave chave a removida
      */
-    virtual void remover(T chave){
+    virtual void remover(T chave) {
         // escreva o algoritmo esperado
     };
 
@@ -80,7 +127,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual std::optional<T> filhoEsquerdaDe(T chave) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->vazia())
+        {
+            return std::nullopt;
+        }
+
         return std::nullopt;
     };
 
@@ -91,7 +142,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual std::optional<T> filhoDireitaDe(T chave) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        if (this->vazia())
+        {
+            return std::nullopt;
+        }
+
         return std::nullopt;
     };
 
@@ -101,8 +156,9 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual ListaEncadeadaAbstrata<T> *emOrdem() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return nullptr;
+        MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
+
+        return List;
     };
 
     /**
@@ -111,8 +167,9 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual ListaEncadeadaAbstrata<T> *preOrdem() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return nullptr;
+        MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
+
+        return List;
     };
 
     /**
@@ -121,8 +178,9 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual ListaEncadeadaAbstrata<T> *posOrdem() const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return nullptr;
+        MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
+
+        return List;
     };
 };
 
