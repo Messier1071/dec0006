@@ -98,18 +98,38 @@ else increment frequency
             return;
         }
         Nodo<T> *Searchptr = this->raiz;
-        Nodo<T> *InsertionPoint = nullptr;
+        Nodo<T> **InsertionPoint = nullptr;
         while (InsertionPoint == nullptr)
         {
             if (Searchptr->chave < chave)
             {
-                Searchptr = Searchptr->filhoEsquerda;
+                if (Searchptr->filhoEsquerda == nullptr)
+                {
+                    InsertionPoint = &Searchptr->filhoEsquerda;
+                }
+                else
+                {
+                    Searchptr = Searchptr->filhoEsquerda;
+                }
             }
-            if (Searchptr->chave > chave)
+            if (Searchptr->chave >= chave)
             {
-                Searchptr = Searchptr->filhoEsquerda;
+                if (Searchptr->filhoDireita == nullptr)
+                {
+                    InsertionPoint = &Searchptr->filhoDireita;
+                }
+                else
+                {
+                    Searchptr = Searchptr->filhoEsquerda;
+                }
+            }
+
+            if (Searchptr == nullptr)
+            {
+                break;
             }
         }
+        *InsertionPoint = new Nodo<T>{chave};
     };
 
     /**
