@@ -40,8 +40,19 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
             return 0;
         }
 
-        return -1;
+        return recursiveCount(this->raiz);
     };
+
+    int recursiveCount(Nodo<T> *rootptr) const
+    {
+        
+        if (rootptr == nullptr)
+        {
+            return 0;
+        }
+        
+        return recursiveCount(rootptr->filhoEsquerda)+recursiveCount(rootptr->filhoDireita)+1;
+    }
 
     /**
      * @brief Verifica se a arvore contem uma chave
@@ -55,8 +66,22 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
             return false;
         }
 
-        return false;
+        return recursiveContains(this->raiz,chave);
     };
+    virtual bool recursiveContains(Nodo<T> *rootptr,T chave) const
+    {
+        if (rootptr == nullptr)
+        {
+            return false;
+        }
+         
+        if (rootptr->chave == chave)
+        {
+            return true;
+        }
+
+        return this->recursiveContains(rootptr->filhoEsquerda, chave) || this->recursiveContains(rootptr->filhoDireita, chave);
+    }
 
     /**
      * @brief Retorna a altura da (sub)arvore
@@ -66,6 +91,33 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
     virtual std::optional<int> altura(T chave) const
     {
         // substitua a linha abaixo pelo algoritmo esperado
+        return recursiveHeight(this->raiz,chave);
+    };
+
+    virtual std::optional<int> recursiveHeight(Nodo<T> *rootptr,T chave) const
+    {
+        if (rootptr == nullptr)
+        {
+            return std::nullopt;
+        }
+        
+        if (rootptr->chave == chave)
+        {
+            return rootptr->altura;
+        }
+
+        std::optional<int> temp;
+        temp = recursiveHeight(rootptr->filhoEsquerda,chave);
+        if (temp != std::nullopt)
+        {
+            return temp;
+        }
+        temp = recursiveHeight(rootptr->filhoDireita, chave);
+        if (temp != std::nullopt)
+        {
+            return temp;
+        }
+
         return std::nullopt;
     };
 
@@ -75,69 +127,77 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      */
     virtual void inserir(T chave)
     {
-        /*
 
-if insertion point is found
+        this->recursiveInsert(this->raiz,chave);
+        this->recalcHeight();
+    };
+    /*
 
-  create new vertex
+    if insertion point is found
 
-if value to be inserted < this key
+      create new vertex
 
-  go left
+    if value to be inserted < this key
 
-else if value to be inserted > this key
+      go left
 
-  go right
+    else if value to be inserted > this key
 
-else increment frequency
-*/
+      go right
 
-        if (this->vazia())
+    else increment frequency
+    */
+    virtual void recursiveInsert(Nodo<T> *&rootptr, T chave)
+    {
+        if (rootptr == nullptr)
         {
-            this->raiz = new Nodo<T>{chave};
+            rootptr = new Nodo<T>{chave};
             return;
         }
-        Nodo<T> *Searchptr = this->raiz;
-        Nodo<T> **InsertionPoint = nullptr;
-        while (InsertionPoint == nullptr)
+        
+    
+        
+        if (rootptr->chave < chave)
         {
-            if (Searchptr->chave < chave)
-            {
-                if (Searchptr->filhoEsquerda == nullptr)
-                {
-                    InsertionPoint = &Searchptr->filhoEsquerda;
-                }
-                else
-                {
-                    Searchptr = Searchptr->filhoEsquerda;
-                }
-            }
-            if (Searchptr->chave >= chave)
-            {
-                if (Searchptr->filhoDireita == nullptr)
-                {
-                    InsertionPoint = &Searchptr->filhoDireita;
-                }
-                else
-                {
-                    Searchptr = Searchptr->filhoEsquerda;
-                }
-            }
-
-            if (Searchptr == nullptr)
-            {
-                break;
-            }
+            this->recursiveInsert(rootptr->filhoDireita,chave);
         }
-        *InsertionPoint = new Nodo<T>{chave};
-    };
+        if (rootptr->chave >= chave)
+        {
+            this->recursiveInsert(rootptr->filhoEsquerda,chave);
+        }
+        
+    }
+
+    virtual void recalcHeight(){
+        recursiveRecalcHeight(this->raiz);
+    }
+
+
+    virtual int recursiveRecalcHeight(Nodo<T> *&rootptr)
+    {
+        if (rootptr == nullptr)
+        {
+            return -1;
+        }
+        rootptr->altura = this->max(this->recursiveRecalcHeight(rootptr->filhoEsquerda), this->recursiveRecalcHeight(rootptr->filhoDireita)) + 1;
+        return rootptr->altura;
+    }
 
     /**
      * @brief Remove uma chave da arvore
      * @param chave chave a removida
      */
     virtual void remover(T chave) {
-        // escreva o algoritmo esperado
+        
+        
+    };
+
+    virtual void recursiveRemove(Nodo<T> *rootptr,T chave) {
+        if (rootptr->filhoEsquerda->chave == chave || rootptr->filhoDireita->chave == chave)
+        {
+            /* code */
+        }
+        
     };
 
     /**
@@ -152,7 +212,14 @@ else increment frequency
             return std::nullopt;
         }
 
-        return std::nullopt;
+        Nodo<T> *temp = recursiveConstFind(this->raiz, chave);
+        if (temp->filhoEsquerda == nullptr)
+        {
+            return std::nullopt;
+        }
+        
+        return temp->filhoEsquerda->chave;
+
     };
 
     /**
@@ -164,10 +231,18 @@ else increment frequency
     {
         if (this->vazia())
         {
-            return std::nullopt;
+            return std::nullopt; 
         }
 
-        return std::nullopt;
+        Nodo<T> * temp = recursiveConstFind(this->raiz,chave);
+        if (temp->filhoDireita == nullptr)
+        {
+            return std::nullopt;
+        }
+        return temp->filhoDireita->chave;
+                
+
+        
     };
 
     /**
@@ -177,8 +252,22 @@ else increment frequency
     virtual ListaEncadeadaAbstrata<T> *emOrdem() const
     {
         MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
-
+        this->recursiveInOrder(this->raiz, List);
         return List;
+    };
+
+    virtual void recursiveInOrder(Nodo<T> *rootptr, MinhaListaEncadeada<T> *List) const
+    {
+        if (rootptr == nullptr)
+        {
+            return;
+        }
+        
+        this->recursiveInOrder(rootptr->filhoEsquerda, List);
+        List->inserirNoFim(rootptr->chave);
+        this->recursiveInOrder(rootptr->filhoDireita, List);
+
+        return;
     };
 
     /**
@@ -188,8 +277,22 @@ else increment frequency
     virtual ListaEncadeadaAbstrata<T> *preOrdem() const
     {
         MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
-
+        this->recursivePreOrder(this->raiz,List);
         return List;
+    };
+
+    virtual void recursivePreOrder(Nodo<T> *rootptr, MinhaListaEncadeada<T> *List) const
+    {
+        if (rootptr == nullptr)
+        {
+            return;
+        }
+        
+        List->inserirNoFim(rootptr->chave);
+        this->recursivePreOrder(rootptr->filhoEsquerda,List);
+        this->recursivePreOrder(rootptr->filhoDireita, List);
+
+        return ;
     };
 
     /**
@@ -199,9 +302,60 @@ else increment frequency
     virtual ListaEncadeadaAbstrata<T> *posOrdem() const
     {
         MinhaListaEncadeada<T> *List = new MinhaListaEncadeada<T>();
-
+        this->recursivePostOrder(this->raiz, List);
         return List;
     };
+
+    virtual void recursivePostOrder(Nodo<T> *rootptr, MinhaListaEncadeada<T> *List) const
+    {
+        if (rootptr == nullptr)
+        {
+            return;
+        }
+
+        this->recursivePostOrder(rootptr->filhoEsquerda, List);
+        this->recursivePostOrder(rootptr->filhoDireita, List);
+        List->inserirNoFim(rootptr->chave);
+        
+
+        return;
+    };
+
+    virtual int max(int a, int b){
+        if (a > b)
+        {
+            return a;
+        }
+        return b;
+    }
+
+    Nodo<T> *recursiveConstFind(Nodo<T> *rootptr, T chave) const
+    {
+        if (rootptr == nullptr)
+        {
+            return nullptr;
+        }
+        
+        if (rootptr->chave == chave)
+        {
+            return rootptr;
+        }
+
+        Nodo<T> *temp = nullptr;
+        temp = this->recursiveConstFind(rootptr->filhoEsquerda, chave);
+        if (temp != nullptr)
+        {
+            return temp;
+        }
+
+        temp = this->recursiveConstFind(rootptr->filhoDireita, chave);
+        if (temp != nullptr)
+        {
+            return temp;
+        }
+        return nullptr;
+    }
+    
 };
 
 #endif
