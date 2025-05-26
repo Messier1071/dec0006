@@ -1,9 +1,21 @@
 #include "gtest/gtest.h"
 #include "MinhaArvoreAVL.h"
 
+// TEST(outrostestes, testes)
+// {
+//     MinhaArvoreAVL<int> *const arvore = new MinhaArvoreAVL<int>{};
+
+//     for (int const e : {5, 3, 7, 2, 4, 6, 9})
+//         arvore->inserir(e);
+
+//     ASSERT_EQ(arvore->recursiveSmallestChild(arvore->raiz()), 0);
+
+//     delete arvore;
+// }
+
 TEST(ArvoreAVLTest, Inicializacao)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
 
     ASSERT_TRUE(arvore->vazia());
     ASSERT_EQ(arvore->quantidade(), 0);
@@ -12,8 +24,8 @@ TEST(ArvoreAVLTest, Inicializacao)
     ASSERT_TRUE(!arvore->altura(1));
     ASSERT_TRUE(!arvore->filhoEsquerdaDe(1));
     ASSERT_TRUE(!arvore->filhoDireitaDe(1));
-    
-    ListaEncadeadaAbstrata<int>* lista{arvore->emOrdem()};
+
+    ListaEncadeadaAbstrata<int> *lista{arvore->emOrdem()};
     ASSERT_TRUE(lista != nullptr);
     ASSERT_TRUE(lista->vazia());
     delete lista;
@@ -27,13 +39,13 @@ TEST(ArvoreAVLTest, Inicializacao)
     ASSERT_TRUE(lista != nullptr);
     ASSERT_TRUE(lista->vazia());
     delete lista;
-    
+
     delete arvore;
 }
 
 TEST(ArvoreAVLTest, InsercaoSemRotacao)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
 
     for (int const e : {5, 3, 7, 2, 4, 6, 9})
         arvore->inserir(e);
@@ -76,8 +88,7 @@ TEST(ArvoreAVLTest, InsercaoSemRotacao)
     ASSERT_TRUE(!arvore->filhoDireitaDe(9));
     ASSERT_TRUE(!arvore->filhoEsquerdaDe(9));
 
-
-    ListaEncadeadaAbstrata<int>* lista{arvore->preOrdem()};
+    ListaEncadeadaAbstrata<int> *lista{arvore->preOrdem()};
     for (int const e : {5, 3, 2, 4, 7, 6, 9})
         ASSERT_EQ(lista->removerDoInicio(), e);
 
@@ -86,7 +97,7 @@ TEST(ArvoreAVLTest, InsercaoSemRotacao)
     lista = arvore->emOrdem();
     for (int const e : {2, 3, 4, 5, 6, 7, 9})
         ASSERT_EQ(lista->removerDoInicio(), e);
-    
+
     delete lista;
 
     lista = arvore->posOrdem();
@@ -95,13 +106,13 @@ TEST(ArvoreAVLTest, InsercaoSemRotacao)
 
     delete lista;
 
-    delete arvore;  
+    delete arvore;
 }
 
 TEST(ArvoreAVLTest, InsercaoRotacaoDireitaSimples)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {4, 3, 2, 1})
         arvore->inserir(e);
 
@@ -126,8 +137,8 @@ TEST(ArvoreAVLTest, InsercaoRotacaoDireitaSimples)
 
 TEST(ArvoreAVLTest, InsercaoRotacaoEsquerdaSimples)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {1, 2, 3, 4})
         arvore->inserir(e);
 
@@ -152,8 +163,8 @@ TEST(ArvoreAVLTest, InsercaoRotacaoEsquerdaSimples)
 
 TEST(ArvoreAVLTest, InsercaoRotacaoEsquerdaDireita)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {6, 4, 8, 2, 7, 9, 3})
         arvore->inserir(e);
 
@@ -190,8 +201,8 @@ TEST(ArvoreAVLTest, InsercaoRotacaoEsquerdaDireita)
 
 TEST(ArvoreAVLTest, InsercaoRotacaoDireitaEsquerda)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {1, 2, 3, 4, 5, 6, 7, 16, 15})
         arvore->inserir(e);
 
@@ -236,25 +247,25 @@ TEST(ArvoreAVLTest, InsercaoRotacaoDireitaEsquerda)
 
 TEST(ArvoreAVLTest, RemocaoSemRotacao)
 {
-    ArvoreBinariaDeBusca<int>* arvore{new MinhaArvoreAVL<int>};
+    ArvoreBinariaDeBusca<int> *arvore{new MinhaArvoreAVL<int>};
 
     for (int const e : {5, 3, 7, 2, 4, 6, 9})
         arvore->inserir(e);
 
-    //Testa remover folha
+    // Testa remover folha
     arvore->remover(9);
     ASSERT_TRUE(!arvore->contem(9));
     ASSERT_EQ(arvore->quantidade(), 6);
     ASSERT_TRUE(!arvore->filhoDireitaDe(7));
-    
-    //Testa remover folha
+
+    // Testa remover folha
     arvore->remover(6);
     ASSERT_TRUE(!arvore->contem(6));
     ASSERT_EQ(arvore->quantidade(), 5);
     ASSERT_TRUE(!arvore->filhoDireitaDe(7));
     ASSERT_TRUE(!arvore->filhoEsquerdaDe(7));
-    
-    //Testa remover raiz
+
+    // Testa remover raiz
     arvore->inserir(6);
     arvore->inserir(9);
     arvore->remover(5);
@@ -265,7 +276,7 @@ TEST(ArvoreAVLTest, RemocaoSemRotacao)
     ASSERT_EQ(*arvore->filhoDireitaDe(7), 9);
     ASSERT_TRUE(!arvore->filhoEsquerdaDe(7));
 
-    //Testa remover nodo com filhoDireita sem descendente a esquerda
+    // Testa remover nodo com filhoDireita sem descendente a esquerda
     arvore->inserir(5);
     ASSERT_EQ(*arvore->filhoDireitaDe(4), 5);
     ASSERT_EQ(*arvore->altura(6), 3);
@@ -311,11 +322,11 @@ TEST(ArvoreAVLTest, RemocaoSemRotacao)
 
 TEST(ArvoreAVLTest, RemocaoRotacaoDireitaSimples)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {50, 25, 75, 12, 37})
         arvore->inserir(e);
-    
+
     arvore->remover(75);
 
     ASSERT_EQ(*arvore->altura(25), 2);
@@ -339,11 +350,11 @@ TEST(ArvoreAVLTest, RemocaoRotacaoDireitaSimples)
 
 TEST(ArvoreAVLTest, RemocaoRotacaoEsquerdaSimples)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {50, 25, 75, 62, 87})
         arvore->inserir(e);
-    
+
     arvore->remover(25);
 
     ASSERT_EQ(*arvore->altura(75), 2);
@@ -367,11 +378,11 @@ TEST(ArvoreAVLTest, RemocaoRotacaoEsquerdaSimples)
 
 TEST(ArvoreAVLTest, RemocaoRotacaoEsquerdaDireita)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {50, 25, 75, 37})
         arvore->inserir(e);
-    
+
     arvore->remover(75);
 
     ASSERT_EQ(*arvore->altura(37), 1);
@@ -391,11 +402,11 @@ TEST(ArvoreAVLTest, RemocaoRotacaoEsquerdaDireita)
 
 TEST(ArvoreAVLTest, RemocaoRotacaoDireitaEsquerda)
 {
-    ArvoreBinariaDeBusca<int>* const arvore{new MinhaArvoreAVL<int>};
-    
+    ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+
     for (int const e : {50, 25, 75, 62})
         arvore->inserir(e);
-    
+
     arvore->remover(25);
 
     ASSERT_EQ(*arvore->altura(62), 1);
