@@ -11,15 +11,15 @@
 template <typename T>
 class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
 {
-    // public:
+public:
     virtual ~MinhaArvoreAVL() {
         // escreva o algoritmo esperado
     };
 
-    // Nodo<T> *raiz() const
-    // {
-    //     return this->raiz;
-    // }
+    Nodo<T> *getraiz() const
+    {
+        return this->raiz;
+    }
 
     /**
      * @brief Verifica se a arvore esta vazia
@@ -190,15 +190,55 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      * @brief Remove uma chave da arvore
      * @param chave chave a removida
      */
-    virtual void remover(T chave) {
-
+    virtual void remover(T chave)
+    {
+        recursiveRemove(this->raiz, chave, this->raiz);
     };
 
-    virtual void recursiveRemove(Nodo<T> *&rootptr, T chave)
+    virtual void recursiveRemove(Nodo<T> *&rootptr, T chave, Nodo<T> *&parentptr)
     {
-        if (rootptr->filhoEsquerda->chave == chave || rootptr->filhoDireita->chave == chave)
+        if (rootptr == nullptr)
         {
-            /* code */
+            return;
+        }
+        if (rootptr->chave == chave)
+        {
+            std::cout << "HEllo World!" << std::endl;
+            return;
+        }
+
+        if (rootptr->filhoEsquerda != nullptr)
+        {
+            if (rootptr->filhoEsquerda->chave == chave)
+            {
+                std::cout << "=================filho encontrado==================" << std::endl;
+                std::cout << rootptr->filhoEsquerda->chave << std::endl;
+                std::cout << "===================================================" << std::endl;
+                recursiveRemove(rootptr->filhoEsquerda, chave, rootptr);
+                return;
+            }
+        }
+        if (rootptr->filhoDireita != nullptr)
+        {
+            if (rootptr->filhoDireita->chave == chave)
+            {
+                std::cout << "=================filho encontrado==================" << std::endl;
+                std::cout << rootptr->filhoDireita << std::endl;
+                std::cout << "===================================================" << std::endl;
+                recursiveRemove(rootptr->filhoDireita, chave, rootptr);
+                return;
+            }
+        }
+
+        if (chave < rootptr->chave)
+        {
+            recursiveRemove(rootptr->filhoEsquerda, chave, rootptr);
+            return;
+        }
+        else
+        {
+            recursiveRemove(rootptr->filhoDireita, chave, rootptr);
+            return;
         }
     };
 
@@ -206,6 +246,12 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
      * @brief finds the smallest child in a tree (including children) returns
      * @param root of the tree
      */
+    virtual int smallest()
+    {
+        Nodo<T> *smallest = recursiveSmallestChild(this->raiz);
+
+        return smallest->chave;
+    }
     virtual Nodo<T> *recursiveSmallestChild(Nodo<T> *&rootptr)
     {
         if (rootptr == nullptr)
@@ -226,6 +272,11 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
         else
         {
             temp = recursiveSmallestChild(rootptr->filhoDireita);
+            if (temp == nullptr)
+            {
+                return smallest;
+            }
+
             if (temp->chave >= 0 && temp->chave < smallest->chave)
             {
                 smallest = temp;

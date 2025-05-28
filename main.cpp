@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
 #include "MinhaArvoreAVL.h"
 
-// TEST(outrostestes, testes)
-// {
-//     MinhaArvoreAVL<int> *const arvore = new MinhaArvoreAVL<int>{};
+TEST(ArvoreAVLTest, testes)
+{
+    MinhaArvoreAVL<int> *const arvore = new MinhaArvoreAVL<int>{};
 
-//     for (int const e : {5, 3, 7, 2, 4, 6, 9})
-//         arvore->inserir(e);
+    for (int const e : {5, 3, 7, 2, 4, 6, 9})
+        arvore->inserir(e);
+    Nodo<int> *raiz2 = arvore->getraiz();
+    ASSERT_EQ(arvore->smallest(), 2);
 
-//     ASSERT_EQ(arvore->recursiveSmallestChild(arvore->raiz()), 0);
-
-//     delete arvore;
-// }
+    delete arvore;
+}
 
 TEST(ArvoreAVLTest, Inicializacao)
 {
