@@ -13,8 +13,22 @@ class MinhaArvoreAVL final : public ArvoreBinariaDeBusca<T>
 {
 public:
     virtual ~MinhaArvoreAVL() {
-        // escreva o algoritmo esperado
+        nukeTree(this->raiz);
     };
+
+    void nukeTree(Nodo<T> *rootptr){
+
+        if (rootptr == nullptr)
+        {
+            return;
+        }
+
+        this->nukeTree(rootptr->filhoEsquerda);
+        this->nukeTree(rootptr->filhoDireita);
+        delete(rootptr);
+
+        return;
+    }
 
     Nodo<T> *getraiz() const
     {
@@ -151,29 +165,96 @@ public:
 
       go right
 
+
+
     else increment frequency
     */
-    virtual void recursiveInsert(Nodo<T> *&rootptr, T chave)
+    virtual void recursiveInsert(Nodo<T> *&rootptr, T chave = 0, Nodo<T> *insert = nullptr)
     {
         if (rootptr == nullptr)
         {
+
             rootptr = new Nodo<T>{chave};
+
+            return;
+        }
+        if (insert != nullptr)
+        {
+            if (insert->filhoDireita == rootptr)
+            {
+                insert->filhoDireita = nullptr;
+            }
+            if (insert->filhoEsquerda == rootptr)
+            {
+                insert->filhoEsquerda = nullptr;
+            }
+
+            if (rootptr->chave >= insert->chave)
+            {
+                rootptr->filhoEsquerda = insert;
+            }
+            else
+            {
+                rootptr->filhoDireita = insert;
+            }
+        }
+        else
+        {
+            if (rootptr->chave < chave)
+            {
+                this->recursiveInsert(rootptr->filhoDireita, chave);
+            }
+            if (rootptr->chave >= chave)
+            {
+                this->recursiveInsert(rootptr->filhoEsquerda, chave);
+            }
+        }
+
+        rootptr->altura = 1 + this->max(this->getHeight(rootptr->filhoEsquerda), this->getHeight(rootptr->filhoDireita));
+
+        int balance = this->getBalanceFactor(rootptr);
+        int Lbalance = this->getBalanceFactor(rootptr->filhoEsquerda);
+        int Rbalance = this->getBalanceFactor(rootptr->filhoDireita);
+
+        if (balance > 1 && Lbalance >= 0) // LL
+        {
+            this->rotateRight(rootptr);
             return;
         }
 
-        if (rootptr->chave < chave)
+        if (balance > 1 && Lbalance < 0) // LR
         {
-            this->recursiveInsert(rootptr->filhoDireita, chave);
+            rotateLeft(rootptr->filhoEsquerda);
+            rotateRight(rootptr);
+            return;
         }
-        if (rootptr->chave >= chave)
+
+        if (balance < -1 && Rbalance <= 0) // RR
         {
-            this->recursiveInsert(rootptr->filhoEsquerda, chave);
+            this->rotateLeft(rootptr);
+            return;
+        }
+
+        if (balance < -1 && Rbalance > 0) // RL
+        {
+            rotateRight(rootptr->filhoDireita);
+            rotateLeft(rootptr);
+            return;
         }
     }
 
     virtual void recalcHeight()
     {
         recursiveRecalcHeight(this->raiz);
+    }
+
+    int getHeight(Nodo<T> *rootptr) const
+    {
+        if (rootptr == nullptr)
+        {
+            return -1;
+        }
+        return rootptr->altura;
     }
 
     virtual int recursiveRecalcHeight(Nodo<T> *&rootptr)
@@ -193,51 +274,108 @@ public:
     virtual void remover(T chave)
     {
         recursiveRemove(this->raiz, chave, this->raiz);
+        this->recalcHeight();
     };
 
-    virtual void recursiveRemove(Nodo<T> *&rootptr, T chave, Nodo<T> *&parentptr)
+    void recursiveRemove(Nodo<T> *rootptr, T chave,Nodo<T> *&parentptr)
     {
         if (rootptr == nullptr)
         {
             return;
         }
-        if (rootptr->chave == chave)
+        
+        
+        Nodo<T> *temp = nullptr;
+
+        if (rootptr->chave < chave)
         {
-            std::cout << "HEllo World!" << std::endl;
+            this->recursiveRemove(rootptr->filhoDireita, chave,rootptr->filhoDireita);
+        }
+        else if (rootptr->chave > chave)
+        {
+            this->recursiveRemove(rootptr->filhoEsquerda, chave, rootptr->filhoEsquerda);
+        }
+        else if (rootptr->chave == chave)
+        {
+            if (this->raiz == rootptr && rootptr->filhoDireita == nullptr && rootptr->filhoEsquerda == nullptr)
+            {
+                delete(rootptr);
+                this->raiz = nullptr;
+                return;
+            }
+            
+            
+            if (rootptr->filhoEsquerda == nullptr)
+            {
+                temp = rootptr->filhoDireita;
+                if (temp != nullptr)
+                {
+                    if (temp->filhoDireita == temp)
+                    {
+                        temp->filhoDireita = nullptr;
+                    }
+                }
+                
+                delete(rootptr);
+
+                parentptr = temp;
+                return;
+            }
+
+            if (rootptr->filhoDireita == nullptr)
+            {
+                temp = rootptr->filhoEsquerda;
+                if (temp != nullptr)
+                {
+                    if (temp->filhoEsquerda == temp)
+                    {
+                        temp->filhoEsquerda = nullptr;
+                    }
+                }
+
+                delete (rootptr);
+
+                parentptr = temp;
+                return;
+            }
+
+            temp = this->recursiveSmallestChild(rootptr->filhoDireita);
+            rootptr->chave = temp->chave;
+            this->recursiveRemove(rootptr->filhoDireita, temp->chave, rootptr->filhoDireita);
+        }
+
+
+        ;
+
+        rootptr->altura = 1 + this->max(this->getHeight(rootptr->filhoEsquerda), this->getHeight(rootptr->filhoDireita));
+
+        int balance = this->getBalanceFactor(rootptr);
+        int Lbalance = this->getBalanceFactor(rootptr->filhoEsquerda);
+        int Rbalance = this->getBalanceFactor(rootptr->filhoDireita);
+
+        if (balance > 1 && Lbalance >= 0) // LL
+        {
+            this->rotateRight(parentptr);
             return;
         }
 
-        if (rootptr->filhoEsquerda != nullptr)
+        if (balance > 1 && Lbalance < 0) // LR
         {
-            if (rootptr->filhoEsquerda->chave == chave)
-            {
-                std::cout << "=================filho encontrado==================" << std::endl;
-                std::cout << rootptr->filhoEsquerda->chave << std::endl;
-                std::cout << "===================================================" << std::endl;
-                recursiveRemove(rootptr->filhoEsquerda, chave, rootptr);
-                return;
-            }
-        }
-        if (rootptr->filhoDireita != nullptr)
-        {
-            if (rootptr->filhoDireita->chave == chave)
-            {
-                std::cout << "=================filho encontrado==================" << std::endl;
-                std::cout << rootptr->filhoDireita << std::endl;
-                std::cout << "===================================================" << std::endl;
-                recursiveRemove(rootptr->filhoDireita, chave, rootptr);
-                return;
-            }
-        }
-
-        if (chave < rootptr->chave)
-        {
-            recursiveRemove(rootptr->filhoEsquerda, chave, rootptr);
+            rotateLeft(parentptr->filhoEsquerda);
+            rotateRight(parentptr);
             return;
         }
-        else
+
+        if (balance < -1 && Rbalance <= 0) // RR
         {
-            recursiveRemove(rootptr->filhoDireita, chave, rootptr);
+            this->rotateLeft(parentptr);
+            return;
+        }
+
+        if (balance < -1 && Rbalance > 0) // RL
+        {
+            rotateRight(parentptr->filhoDireita);
+            rotateLeft(parentptr);
             return;
         }
     };
@@ -252,38 +390,57 @@ public:
 
         return smallest->chave;
     }
+
     virtual Nodo<T> *recursiveSmallestChild(Nodo<T> *&rootptr)
     {
-        if (rootptr == nullptr)
-        {
-            return nullptr;
-        }
+        // if (rootptr == nullptr)
+        // {
+        //     return nullptr;
+        // }
+
+        // Nodo<T> *smallest = nullptr;
+        // Nodo<T> *temp = nullptr;
+
+        // temp = recursiveSmallestChild(rootptr->filhoEsquerda);
+        // smallest = temp;
+        // if (temp == nullptr)
+        // {
+
+        //     temp = recursiveSmallestChild(rootptr->filhoDireita);
+        //     if (temp == nullptr)
+        //     {
+        //         return rootptr;
+        //     }
+        //     if (smallest != nullptr)
+        //     {
+        //         if (smallest->chave > temp->chave)
+        //         {
+        //             smallest = temp;
+        //         }
+        //     }
+        //     else if (rootptr->filhoDireita)
+        //     {
+                
+        //     }
+        
+
+
+        // }
+
+        // if (rootptr->chave < smallest->chave)
+        // {
+        //     smallest = rootptr;
+        // }
+
+        // return smallest;
 
         Nodo<T> *smallest = rootptr;
-        Nodo<T> *temp = rootptr;
-        temp = recursiveSmallestChild(rootptr->filhoEsquerda);
-        if (temp != nullptr)
+        while (smallest->filhoEsquerda != nullptr)
         {
-            if (temp->chave < smallest->chave)
-            {
-                smallest = temp;
-            }
+            smallest = smallest->filhoEsquerda;
         }
-        else
-        {
-            temp = recursiveSmallestChild(rootptr->filhoDireita);
-            if (temp == nullptr)
-            {
-                return smallest;
-            }
-
-            if (temp->chave >= 0 && temp->chave < smallest->chave)
-            {
-                smallest = temp;
-            }
-        }
-
         return smallest;
+
     }
 
     /**
@@ -437,6 +594,40 @@ public:
         }
         return nullptr;
     }
+
+    int getBalanceFactor(Nodo<T> *&rootptr)
+    {
+        if (rootptr == nullptr)
+        {
+            return 0;
+        }
+        return getHeight(rootptr->filhoEsquerda) - getHeight(rootptr->filhoDireita);
+    }
+    void rotateRight(Nodo<T> *&rootptr)
+    {
+        Nodo<T> *&leftnode = rootptr->filhoEsquerda;
+        Nodo<T> *T2 = leftnode->filhoDireita;
+        Nodo<T> *&T3 = rootptr->filhoEsquerda;
+
+        leftnode->filhoDireita = rootptr;
+        rootptr = leftnode;
+        T3 = T2;
+
+        return;
+    }
+    void rotateLeft(Nodo<T> *&rootptr)
+    {
+        Nodo<T> *&rightnode = rootptr->filhoDireita;
+        Nodo<T> *T2 = rightnode->filhoEsquerda;
+        Nodo<T> *&T3 = rootptr->filhoDireita;
+
+        rightnode->filhoEsquerda = rootptr;
+        rootptr = rightnode;
+        T3 = T2;
+
+        return;
+    }
+
 };
 
 #endif

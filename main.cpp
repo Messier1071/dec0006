@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
 #include "MinhaArvoreAVL.h"
 
-TEST(ArvoreAVLTest, testes)
-{
-    MinhaArvoreAVL<int> *const arvore = new MinhaArvoreAVL<int>{};
+// TEST(ArvoreAVLTest, testes)
+// {
+//     MinhaArvoreAVL<int> *const arvore = new MinhaArvoreAVL<int>{};
 
-    for (int const e : {5, 3, 7, 2, 4, 6, 9})
-        arvore->inserir(e);
-    Nodo<int> *raiz2 = arvore->getraiz();
-    ASSERT_EQ(arvore->smallest(), 2);
+//     for (int const e : {5, 3, 7, 2, 4, 6, 9})
+//         arvore->inserir(e);
+//     Nodo<int> *raiz2 = arvore->getraiz();
+//     ASSERT_EQ(arvore->smallest(), 2);
 
-    delete arvore;
-}
+//     delete arvore;
+// }
 
 TEST(ArvoreAVLTest, Inicializacao)
 {
@@ -428,4 +428,8 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
+
+    // ArvoreBinariaDeBusca<int> *const arvore{new MinhaArvoreAVL<int>};
+    // arvore->inserir(1);
+    // delete arvore;
 }
