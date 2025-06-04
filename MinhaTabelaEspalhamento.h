@@ -8,20 +8,24 @@
 #include "excecoes.h"
 // ExcecaoDadoInexistente
 
+#include <cmath>
+
 template <typename T, std::size_t capac>
 class MinhaTabelaEspalhamento final : public TabelaEspalhamentoAbstrata<T, capac>
 {
-public:
 
+public:
     /**
      * @brief Obtém a capacidade da tabela.
-     * 
+     *
      * @return Um inteiro maior do que 0.
      */
     virtual std::size_t capacidade() const
     {
         // substitua a linha abaixo pelo algoritmo esperado
-        return -1;
+
+        this->codigoEspalhamento(std::string{"UFSC"});
+        return capac;
     };
 
     /**
@@ -30,8 +34,7 @@ public:
      *
      * @param dado O dado a ser inserido.
      */
-    virtual void inserir(T dado) 
-    {
+    virtual void inserir(T dado) {
         // escreva o algoritmo esperado
     };
 
@@ -65,13 +68,20 @@ public:
     virtual std::size_t quantidade() const
     {
         // substitua a linha abaixo pelo algoritmo esperado
-        return -1;
+        std::size_t count = 0;
+
+        for (size_t i = 0; i < capac; i++)
+        {
+            count += this->tabela.at(i).tamanho();
+        }
+
+        return count;
     };
 
 protected:
     /**
      * @brief Obtém a posição correspondente na tabela para o dado.
-     * 
+     *
      * @param dado O dado.
      * @return Um inteiro na faixa [0, capacidade).
      */
@@ -104,8 +114,14 @@ private:
      */
     std::size_t codigoEspalhamento(std::string const &string) const
     {
-        // Implemente aqui.
-        return 0;
+        std::size_t key = 0;
+        int n = string.size();
+
+        for (size_t i = 0; i < n; i++)
+        {
+            key += string[i] * std::pow(31, (n - (i + 1)));
+        }
+        return key;
     }
 };
 
