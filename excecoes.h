@@ -1,80 +1,62 @@
-#ifndef DEC0006_LISTA_ENCADEADA_EXCECOES_H
-#define DEC0006_LISTA_ENCADEADA_EXCECOES_H
+#ifndef DEC0006_GRAFO_EXCECOES_H
+#define DEC0006_GRAFO_EXCECOES_H
 
 #include <stdexcept>
+// std::invalid_argument
 // std::length_error
-// std::logic_error
 // std::out_of_range
-// std::runtime_error
-#include <string>
-// std::string
 
 /**
- * @brief Exceção lançada caso se obter a posição de um dado que não está
- * contido na lista encadeada.
+ * @brief Exceção lançada quando a matriz de adjacência de um grafo está vazia.
  * 
  */
-class ExcecaoDadoInexistente: public std::logic_error
+class ExcecaoMatrizAdjacenciaVazia: public std::length_error
 {
 public:
-    ExcecaoDadoInexistente();
+    ExcecaoMatrizAdjacenciaVazia();
 };
 
 /**
- * @brief Exceção lançada caso se tente realizar operações em uma lista
- * encadeada que não pode estar vazia.
+ * @brief Exceção lançada quando a matriz de adjacência de um grafo não é
+ * quadradada.
  * 
  */
-class ExcecaoListaEncadeadaVazia: public std::length_error
+class ExcecaoMatrizAdjacenciaNaoQuadrada: public std::length_error
 {
 public:
-    ExcecaoListaEncadeadaVazia();
+    ExcecaoMatrizAdjacenciaNaoQuadrada();
 };
 
 /**
- * @brief Exceção lançada por funções que ainda não foram implementadas e não
- * devem ser chamadas.
+ * @brief Exceção lançada quando a matriz de adjacência de um grafo contém
+ * algum custo negativo.
  * 
  */
-class [[maybe_unused]] ExcecaoNaoImplementado: public std::runtime_error
+class ExcecaoCustoNegativo: public std::invalid_argument
 {
 public:
-	/**
-	 * @brief Constrói uma ExcecaoNaoImplementado.
-	 * 
-	 * @param nome O nome da função de onde a exceção está sendo lançada.
-	 */
-	explicit ExcecaoNaoImplementado(std::string const& nome);
+    ExcecaoCustoNegativo();
 };
 
 /**
- * @brief Exceção lançada caso se tente acessar uma posição inválida em uma
- * lista encadeada.
+ * @brief Exceção lançada quando a matriz de adjacência de um grafo contém
+ * algum laço.
  * 
  */
-class ExcecaoPosicaoInvalida: public std::out_of_range
+class ExcecaoVerticeComLaco: public std::invalid_argument
 {
 public:
-    ExcecaoPosicaoInvalida();
+    ExcecaoVerticeComLaco();
 };
 
-ExcecaoDadoInexistente::ExcecaoDadoInexistente():
-    std::logic_error{"esse dado nao se encontra na lista"}
-{}
-
-ExcecaoListaEncadeadaVazia::ExcecaoListaEncadeadaVazia():
-    std::length_error{"a lista encadeada esta vazia"}
-{}
-
-ExcecaoNaoImplementado::ExcecaoNaoImplementado(std::string const& nome):
-	std::runtime_error
-	{
-		std::string{"\""} + nome + "\" nao foi implementado ainda"
-	}
-{}
-
-ExcecaoPosicaoInvalida::ExcecaoPosicaoInvalida():
-    std::out_of_range{"posicao invalida na lista encadeada"}
-{}
+/**
+ * @brief Exceção lançada quando um vértice inválido é utilizado em um grafo.
+ * 
+ */
+class ExcecaoVerticeInvalido: public std::out_of_range
+{
+public:
+    ExcecaoVerticeInvalido();
+};
 
 #endif
