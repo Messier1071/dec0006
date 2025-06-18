@@ -24,7 +24,6 @@ public:
     {
         // substitua a linha abaixo pelo algoritmo esperado
 
-        this->codigoEspalhamento(std::string{"UFSC"});
         return capac;
     };
 
@@ -34,8 +33,15 @@ public:
      *
      * @param dado O dado a ser inserido.
      */
-    virtual void inserir(T dado) {
-        // escreva o algoritmo esperado
+    virtual void inserir(T dado)
+    {
+        std::size_t key = this->funcaoEspalhamento(dado);
+        if (this->tabela.at(key).contem(dado))
+        {
+            return;
+        }
+
+        this->tabela.at(key).inserirNoFim(dado);
     };
 
     /**
@@ -44,8 +50,16 @@ public:
      *
      * @param dado O dado a ser removido.
      */
-    virtual void remover(T dado) {
-        // escreva o algoritmo esperado
+    virtual void remover(T dado)
+    {
+        std::size_t key = this->funcaoEspalhamento(dado);
+        if (this->tabela.at(key).contem(dado))
+        {
+            this->tabela.at(key).remover(dado);
+            return;
+        }
+        throw(ExcecaoDadoInexistente());
+        return;
     };
 
     /**
@@ -56,7 +70,11 @@ public:
      */
     virtual bool contem(T dado) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
+        std::size_t key = this->funcaoEspalhamento(dado);
+        if (this->tabela.at(key).contem(dado))
+        {
+            return true;
+        }
         return false;
     };
 
@@ -87,8 +105,8 @@ protected:
      */
     virtual std::size_t funcaoEspalhamento(T dado) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado
-        return -1;
+        std::size_t key = this->codigoEspalhamento(dado) % capac;
+        return key;
     };
 
 private:
@@ -102,8 +120,8 @@ private:
     template <typename U>
     std::size_t codigoEspalhamento(U integral) const
     {
-        // substitua a linha abaixo pelo algoritmo esperado. Dica use std::is_integral_v<U> para garantir que U é um tipo integral
-        return 0;
+        static_assert(std::is_integral_v<U>, "Invalid Type");
+        return static_cast<std::size_t>(integral);
     };
 
     /**

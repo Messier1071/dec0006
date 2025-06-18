@@ -257,7 +257,7 @@ public:
      */
     virtual T removerDoInicio()
     {
-        T dado = 0;
+
         if (this->_tamanho == 0)
         {
             throw(ExcecaoListaEncadeadaVazia());
@@ -266,7 +266,7 @@ public:
         Elemento<T> *TemporaryDeletePtr = nullptr;
         TemporaryDeletePtr = this->_primeiro;
         this->_primeiro = TemporaryDeletePtr->proximo;
-        dado = TemporaryDeletePtr->dado;
+        T dado = TemporaryDeletePtr->dado;
         delete (TemporaryDeletePtr);
 
         this->_tamanho -= 1;
