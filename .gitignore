@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+wslbuild/
+
+build/
+build-dir/
+.vscode/
