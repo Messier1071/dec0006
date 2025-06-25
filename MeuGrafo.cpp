@@ -19,6 +19,19 @@
 // ExcecaoVerticeInvalido
 
 // implente aqui
+struct Node
+{
+    std::size_t id;     // pos em matrizadjacencia
+    std::size_t rating; // estimativa
+    int previd;
+
+    Node(std::size_t tid, std::size_t rtng = std::numeric_limits<double>::infinity(), int prev = -1) : id(tid), rating(rtng), previd(prev) {}
+
+    bool operator<(const Node &tmp) const
+    {
+        return rating > tmp.rating;
+    }
+};
 
 MeuGrafo::MeuGrafo(MatrizAdjacencia const &matrizAdjacencia) : GrafoAbstrato(matrizAdjacencia)
 {
@@ -113,6 +126,38 @@ double MeuGrafo::custo(std::size_t origem, std::size_t destino) const
 };
 std::vector<double> MeuGrafo::menoresDistancias(std::size_t origem) const
 {
+    std::priority_queue<Node> Prioq;
+    for (size_t i = 0; i < this->_matrizAdjacencia.size(); i++)
+    {
+        if (i == origem)
+        {
+            Prioq.emplace(Node(i, 0));
+        }
+        else
+        {
+            Prioq.emplace(Node(i));
+        }
+    } // initialize queue
 
     return std::vector<double>{1};
 };
+
+void Relax(Node current, Node neighbor)
+{
+}
+
+/*
+std::priority_queue<Task> task_queue;
+
+    // Add tasks to the priority queue
+    task_queue.emplace(3, "Write report");
+    task_queue.emplace(1, "Fix critical bug");
+    task_queue.emplace(2, "Prepare presentation");
+
+    // Process tasks in priority order
+    while (!task_queue.empty()) {
+        const Task& task = task_queue.top();
+        std::cout << "Priority: " << task.priority << ", Task: " << task.name << std::endl;
+        task_queue.pop();
+    }
+*/
