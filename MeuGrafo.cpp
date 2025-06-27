@@ -10,7 +10,7 @@
 // std::priority_queue
 #include <vector>
 // std::vector
-
+#include <iostream>
 #include "excecoes.h"
 // ExcecaoMatrizAdjacenciaVazia
 // ExcecaoMatrizAdjacenciaNaoQuadrada
@@ -21,15 +21,29 @@
 // implente aqui
 struct Node
 {
-    std::size_t id;     // pos em matrizadjacencia
-    std::size_t rating; // estimativa
+    std::size_t id; // pos em matrizadjacencia
+    double rating;  // estimativa
     int previd;
 
-    Node(std::size_t tid, std::size_t rtng = std::numeric_limits<double>::infinity(), int prev = -1) : id(tid), rating(rtng), previd(prev) {}
+    Node(std::size_t tid, double rtng = std::numeric_limits<double>::infinity(), int prev = -1) : id(tid), rating(rtng), previd(prev) {}
 
     bool operator<(const Node &tmp) const
     {
         return rating > tmp.rating;
+    }
+};
+
+struct NodeOut
+{
+    std::size_t id; // pos em matrizadjacencia
+    double rating;  // estimativa
+    int previd;
+
+    NodeOut(Node orig) : id(orig.id), rating(orig.rating), previd(orig.previd) {}
+
+    bool operator<(const NodeOut &tmp) const
+    {
+        return id > tmp.id;
     }
 };
 
@@ -126,25 +140,114 @@ double MeuGrafo::custo(std::size_t origem, std::size_t destino) const
 };
 std::vector<double> MeuGrafo::menoresDistancias(std::size_t origem) const
 {
+    if (origem >= this->_matrizAdjacencia.size())
+    {
+        std::cout << origem << std::endl;
+
+        throw(ExcecaoVerticeInvalido());
+    }
+
     std::priority_queue<Node> Prioq;
+    std::priority_queue<NodeOut> Exitq;
+    std::vector<Node> Tempq;
+    std::vector<double> Outq;
+    size_t counter = 0;
+    size_t ref = 0;
     for (size_t i = 0; i < this->_matrizAdjacencia.size(); i++)
     {
+        if (this->_matrizAdjacencia.at(origem).at(i) == inf)
+        {
+            counter++;
+        }
+
         if (i == origem)
         {
             Prioq.emplace(Node(i, 0));
         }
         else
         {
-            Prioq.emplace(Node(i));
+            Prioq.emplace(Node(i, inf));
         }
-    } // initialize queue
+    } // initialize
 
-    return std::vector<double>{1};
+    if (counter >= this->_matrizAdjacencia.size()) // node is isolated
+    {
+        for (size_t i = 1; i < this->_matrizAdjacencia.size(); i++)
+        {
+            Outq.push_back(inf);
+        }
+        Outq.push_back(0);
+        return Outq;
+    }
+
+    while (!Prioq.empty())
+    {
+        counter = 0;
+        Node current = Prioq.top();
+        Node temp(0, 0, 0);
+        Prioq.pop();
+
+        while (!Prioq.empty())
+        {
+            Node neighbor = Prioq.top();
+            Prioq.pop();
+
+            if (neighbor.rating > current.rating + this->custo(current.id, neighbor.id))
+            {
+                neighbor.rating = current.rating + this->custo(current.id, neighbor.id);
+                neighbor.previd = current.id;
+            }
+
+            Tempq.push_back(neighbor);
+        }
+        Exitq.emplace(current);
+        // for (size_t i = 0; i < Tempq.size(); i++)
+        // {
+        //     if (Tempq.at(i).previd != -1)
+        //     {
+        //         counter++;
+        //     }
+        // }
+        // Tempq.shrink_to_fit();
+        // if (counter == Tempq.size())
+        // {
+        //     std::cout<<counter<<std::endl;
+        //     if (!Tempq.empty())
+        //     {
+        //         while (!Tempq.empty())
+        //         {
+        //             Exitq.emplace(Tempq.back());
+        //             Tempq.pop_back();
+        //         }
+        //     }
+
+        // }
+
+        while (!Tempq.empty())
+        {
+
+            Prioq.emplace(Tempq.back());
+            Tempq.pop_back();
+        }
+    }
+
+    while (!Exitq.empty())
+    {
+
+        if (Exitq.top().rating == 1.8446744073709552e+19)
+        {
+            Outq.push_back(inf);
+        }
+        else
+        {
+            Outq.push_back(Exitq.top().rating);
+        }
+
+        Exitq.pop();
+    }
+
+    return Outq;
 };
-
-void Relax(Node current, Node neighbor)
-{
-}
 
 /*
 std::priority_queue<Task> task_queue;
